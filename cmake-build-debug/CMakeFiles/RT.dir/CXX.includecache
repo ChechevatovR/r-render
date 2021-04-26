@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Chechevatov/Projects/CLionProjects/r-render/TGAImage.h
+bits/stdc++.h
+-
+
+C:/Users/Chechevatov/Projects/CLionProjects/r-render/_tests.cpp
+bits/stdc++.h
+-
+TGAImage.h
+C:/Users/Chechevatov/Projects/CLionProjects/r-render/TGAImage.h
+

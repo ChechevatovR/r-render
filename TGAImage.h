@@ -2,19 +2,25 @@
 #define RT_TGAIMAGE_H
 
 #include <bits/stdc++.h>
-
+#include "Color.h"
 
 class TGAImage {
-
 public:
-    uint8_t bitsPerColor;
-    uint8_t bitsPerAlpha;
+    TGAImage(uint16_t width, uint16_t height);
+
+    uint8_t bitsPerColor = 32;
+    uint8_t bitsPerAlpha = 8;
     uint16_t width, height;
-    
-    int write();
-    
+
+    Color* data = nullptr;
+
+    int write(char *string);
+
+    void set(int x, int y, Color c);
+
 private:
-    // None
+public:
+    virtual ~TGAImage();
 };
 
 #endif // RT_TGAIMAGE_H

@@ -23,7 +23,7 @@ const double FOV_v = 35;
 int width;
 int height;
 
-const TGAColor BACKGROUND_COLOR = TGAColor(160, 160, 160, 255);
+const Color BACKGROUND_COLOR = Color(160, 160, 160, 255);
 
 // ============================== Low functions =============================
 double len(Point a) {
@@ -104,12 +104,12 @@ pair<double, double> get_lightning(Point here, Sphere sphere) {
     return make_pair(to_range(here_light_d, 0., 1.), to_range(here_light_s, 0., 1.));
 }
 
-TGAColor get_color(Point here, Sphere sphere, unsigned int bounces) {
+Color get_color(Point here, Sphere sphere, unsigned int bounces) {
     if (bounces <= 0) return BACKGROUND_COLOR;
     auto result = get_lightning(here, sphere);
     double here_light_d = result.first, here_light_s = result.second;
     // DO REFLECTION
-    TGAColor here_color_d;
+    Color here_color_d;
     if (sphere.reflectivity != 0) {
         int i_hit_r;
         Point dir_r = reflect(get_normal(sphere, here), here * -1.);
@@ -118,7 +118,7 @@ TGAColor get_color(Point here, Sphere sphere, unsigned int bounces) {
         double k = sphere.reflectivity;
         if (i_hit_r != -1) {
             here = here + (dir_r * res.second);
-            TGAColor refl = get_color(here, spheres[i_hit_r], bounces - 1);
+            Color refl = get_color(here, spheres[i_hit_r], bounces - 1);
             here_color_d = mix(refl * k, sphere.color * (1 - k));
         } else here_color_d = mix(BACKGROUND_COLOR * k, sphere.color * (1 - k));
     } else here_color_d = sphere.color;
@@ -132,7 +132,7 @@ TGAColor get_color(Point here, Sphere sphere, unsigned int bounces) {
     double here_r = (one_minus_a0 * here_d_r + here_light_s);
     double here_g = (one_minus_a0 * here_d_g + here_light_s);
     double here_b = (one_minus_a0 * here_d_b + here_light_s);
-    return TGAColor(here_r * 255, here_g * 255, here_b * 255, 255);
+    return Color(here_r * 255, here_g * 255, here_b * 255, 255);
 
 }
 
@@ -145,14 +145,14 @@ void render(char out_path[], unsigned char mode) {
     const double deltaX = (B.x - A.x) / width;
     const double deltaY = (B.y - A.y) / width;
     const double deltaZ = (A.z - D.z) / height;
-    TGAImage image(width, height, TGAImage::RGBA);
+    TGAImage image(width, height);
     for (int w_canvas = 0; w_canvas < width; w_canvas++) {
         for (int h_canvas = 0; h_canvas < height; h_canvas++) {
             Point dir = Point(A.x + deltaX * w_canvas, A.y + deltaY * w_canvas, A.z - deltaZ * h_canvas);
             auto checked = ray_to_sphere(cam, dir);
             int i_hit = checked.first;
             double t = checked.second;
-            TGAColor here_color;
+            Color here_color;
             if (i_hit != -1) {
                 Point here = Point(t * dir.x, t * dir.y, t * dir.z);
                 switch (mode) {
@@ -164,12 +164,12 @@ void render(char out_path[], unsigned char mode) {
                     }
                     case LIGHT_MODE: {
                         auto here_light = get_lightning(here, spheres[i_hit]);
-                        here_color = TGAColor(here_light.first * 255, here_light.second * 255, 0, 255);
+                        here_color = Color(here_light.first * 255, here_light.second * 255, 0, 255);
                         break;
                     }
                     case NORM_MODE: {
                         Point norm = get_normal(spheres[i_hit], here);
-                        here_color = TGAColor((norm.x + 1) * 127, (norm.y + 1) * 127, (norm.z + 1) * 127, 255);
+                        here_color = Color((norm.x + 1) * 127, (norm.y + 1) * 127, (norm.z + 1) * 127, 255);
                         break;
                     }
                     case COS_MODE: {
@@ -177,28 +177,28 @@ void render(char out_path[], unsigned char mode) {
                         const Point norm = get_normal(spheres[i_hit], here);
                         const Point toLight = light_d.c - here;
                         double cos = get_cos(norm, toLight - norm);
-                        here_color = TGAColor(cos * 255, cos * 255, cos * 255, 255);
+                        here_color = Color(cos * 255, cos * 255, cos * 255, 255);
                     }
                     case DEPTH_MODE: {
-                        here_color = TGAColor(t, t, t, 255);
+                        here_color = Color(t, t, t, 255);
                         break;
                     }
                     case REFL_MODE: {
                         const Point norm = get_normal(spheres[i_hit], here);
                         const Point refl = reflect(norm, here * -1. / len(here));
-                        here_color = TGAColor((refl.x + 1) * 127, (refl.y + 1) * 127, (refl.z + 1) * 127, 255);
+                        here_color = Color((refl.x + 1) * 127, (refl.y + 1) * 127, (refl.z + 1) * 127, 255);
                         break;
                     }
                 }
             } else if (mode == RGB_MODE) {
                 here_color = BACKGROUND_COLOR;
             } else {
-                here_color = TGAColor(0, 0, 0, 0);
+                here_color = Color(0, 0, 0, 0);
             }
             image.set(w_canvas, h_canvas, here_color);
         }
     }
-    image.write_tga_file(out_path);
+    image.write(out_path);
 }
 
 int main(int argc, char *argv[]) {
@@ -210,7 +210,7 @@ int main(int argc, char *argv[]) {
     ios_base::sync_with_stdio(false);
     width = atoi(argv[1]);
     height = atoi(argv[2]);
-    render("C:/output_rgb.tga", RGB_MODE);
+    render("output_rgb.tga", RGB_MODE);
 
     //width /= 10;
     //height /= 10;

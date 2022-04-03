@@ -2,13 +2,13 @@
 #define IT_GEOMETRIES_H
 
 #include "bits/stdc++.h"
-#include "Rationals.h"
-#include "tgaimage.cpp"
+#include "TGAImage.h"
+#include "Color.h"
 
 #define PI 3.1415926535897932384626433832795
 
 
-vector<double> matrixMultiply(vector<double> a, vector<vector<double>> b) {
+std::vector<double> matrixMultiply(std::vector<double> a, std::vector<std::vector<double>> b) {
     /*
        a11
        a21
@@ -18,7 +18,7 @@ vector<double> matrixMultiply(vector<double> a, vector<vector<double>> b) {
           | b21 b22 b23
           | b31 b32 b33
      */
-    vector<double> c(3);
+    std::vector<double> c(3);
     for (int i = 0; i < 3; i++) {
         c[i] = 0;
         for (int j = 0; j < 3; j++) {
@@ -41,13 +41,13 @@ struct Point {
 struct Sphere {
     double r;
     Point c;
-    TGAColor color;
+    Color color;
     unsigned int sharpeness; // if 0 - no highlights
     double reflectivity;
 
     Sphere(double x, double y, double z, double rad, int r, int g, int b, unsigned int shrp, double refl) : c(
             Point(x, y, z)), r(rad),
-                                                                                                            color(TGAColor(
+                                                                                                            color(Color(
                                                                                                                     r,
                                                                                                                     g,
                                                                                                                     b,
@@ -72,11 +72,11 @@ double deg_to_rad(double rad) {
 // ============================== Low functions =============================
 template<typename T>
 T to_range(T a, T min_, T max_) {
-    return min(max_, max(min_, a));
+    return std::min(max_, std::max(min_, a));
 }
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-ostream &operator<<(ostream &out, Point &p) {
+std::ostream &operator<<(std::ostream &out, Point &p) {
     out << "Point(" << p.x << "; " << p.y << "; " << p.z << ")";
     return out;
 }
@@ -102,20 +102,20 @@ Point operator-(Point a, Point b) {
 }
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-TGAColor mix(TGAColor a, TGAColor b) {
-    return TGAColor((a.r + b.r) / 2, (a.g + b.g) / 2, (a.b + b.b) / 2, 255);
+Color mix(Color a, Color b) {
+    return Color((a.r + b.r) / 2, (a.g + b.g) / 2, (a.b + b.b) / 2, 255);
 }
 
-TGAColor operator*(TGAColor a, double k) {
-    return TGAColor(to_range(a.r * k, 0., 255.), to_range(a.g * k, 0., 255.), to_range(a.b * k, 0., 255.), 255);
+Color operator*(Color a, double k) {
+    return Color(to_range(a.r * k, 0., 255.), to_range(a.g * k, 0., 255.), to_range(a.b * k, 0., 255.), 255);
 }
 
-TGAColor operator+(TGAColor a, TGAColor b) {
-    return TGAColor(to_range(a.r + b.r, 0, 255), to_range(a.g + b.g, 0, 255), to_range(a.b * b.b, 0, 255), 255);
+Color operator+(Color a, Color b) {
+    return Color(to_range(a.r + b.r, 0, 255), to_range(a.g + b.g, 0, 255), to_range(a.b * b.b, 0, 255), 255);
 }
 
 // ================================= Scene =================================
-const vector<Sphere>
+const std::vector<Sphere>
 spheres = {
         //      x   y      z  rad    r    g    b  shrp  refl
         Sphere(10, -3, -1, 0.5, 0, 255, 255, 20, 0.3),
@@ -126,7 +126,7 @@ spheres = {
         Sphere(0, 0, -1005, 999, 255, 255, 255, 30, 1)
 };
 
-const vector<Light> lights_p = {
+const std::vector<Light> lights_p = {
         Light(0.4, 3, -3, 10)
 };
 const Light light_d = Light(0.7, -1, 3, 3); // Directional light

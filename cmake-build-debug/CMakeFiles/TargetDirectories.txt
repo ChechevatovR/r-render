@@ -1,3 +1,0 @@
-C:/Users/Chechevatov/Projects/CLionProjects/r-render/cmake-build-debug/CMakeFiles/RT.dir
-C:/Users/Chechevatov/Projects/CLionProjects/r-render/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Chechevatov/Projects/CLionProjects/r-render/cmake-build-debug/CMakeFiles/rebuild_cache.dir
